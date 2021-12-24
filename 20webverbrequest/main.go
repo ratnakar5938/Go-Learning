@@ -7,12 +7,15 @@ import (
 	"strings"
 )
 
-const myUrl string = "http://localhost:8000/get"
+const myGETurl string = "http://localhost:8000/get"
+
+const myPOSTurl string = "http://localhost:8000/post"
 
 func main() {
 
 	fmt.Println("Get Requests in GO")
-	PerformGetRequest(myUrl)
+	PerformGetRequest(myGETurl)
+	PerformPostJsonRequest(myPOSTurl)
 
 }
 
@@ -35,4 +38,24 @@ func PerformGetRequest(geturl string) {
 	byteCount, _ := responseString.Write(content)
 	fmt.Println(byteCount)
 	fmt.Println(responseString.String())
+}
+
+func PerformPostJsonRequest(postUrl string) {
+	// fake json payload
+	requestBody := strings.NewReader(`
+		{
+			"name":"RATNAKAR",
+			"course":"Let's Go With GoLang",
+			"price":0
+		}
+	`)
+
+	response, err := http.Post(postUrl, "application/json", requestBody)
+	if err != nil {
+		panic(err)
+	}
+	defer response.Body.Close()
+
+	content, _ := ioutil.ReadAll(response.Body)
+	fmt.Println(string(content))
 }
