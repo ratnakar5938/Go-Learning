@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/ratnakar5938/mongoapi/model"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -24,14 +25,26 @@ func init() {
 
 	// connect to mongodb
 	client, err := mongo.Connect(context.TODO(), clientOptions)
-
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkErr(err)
 	fmt.Println("MongoDB connection success")
 
 	collection = client.Database(dbName).Collection(colName)
 
 	// collection instance
 	fmt.Println("Collection instance is ready")
+}
+
+// MongoDB helpers - file
+
+// insert 1 record
+func insertOneMovie(movie model.Netflix) {
+	inserted, err := collection.InsertOne(context.Background(), movie)
+	checkErr(err)
+	fmt.Println("Inserted 1 movie in db with id:", inserted.InsertedID)
+}
+
+func checkErr(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
 }
